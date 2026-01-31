@@ -1,6 +1,7 @@
 using BillerJacket.Application.Common;
 using BillerJacket.Infrastructure.Data;
 using BillerJacket.Infrastructure.Identity;
+using BillerJacket.Web.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -16,7 +17,9 @@ builder.Host.UseSerilog((ctx, cfg) => cfg
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DefaultConnection not configured.");
 
-builder.Services.AddDbContext<ArDbContext>(options =>
+builder.Services.AddScoped<ITenantProvider, CurrentTenantProvider>();
+
+builder.Services.AddDbContext<ArDbContext>((sp, options) =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
@@ -32,7 +35,8 @@ builder.Services.AddDefaultIdentity<AppUser>(options =>
         options.Password.RequireNonAlphanumeric = false;
         options.SignIn.RequireConfirmedAccount = false;
     })
-    .AddEntityFrameworkStores<AppIdentityDbContext>();
+    .AddEntityFrameworkStores<AppIdentityDbContext>()
+    .AddClaimsPrincipalFactory<CustomClaimsPrincipalFactory>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -55,7 +59,8 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/");
     options.Conventions.AllowAnonymousToPage("/Login");
-    options.Conventions.AllowAnonymousToPage("/Index");
+    options.Conventions.AllowAnonymousToPage("/Register");
+    options.Conventions.AllowAnonymousToPage("/Setup");
     options.Conventions.AuthorizeFolder("/Admin", "SuperAdmin");
 });
 
@@ -64,6 +69,12 @@ builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 Current.Initialize(app.Services.GetRequiredService<IHttpContextAccessor>());
+
+// Seed data in development
+if (app.Environment.IsDevelopment())
+{
+    await SeedData.EnsureSeedDataAsync(app.Services);
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -77,6 +88,7 @@ app.UseRouting();
 app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSetupRedirect();
 app.MapRazorPages();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "BillerJacket.Web" }));

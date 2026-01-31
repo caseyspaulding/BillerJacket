@@ -1,3 +1,4 @@
+using BillerJacket.Application.Common;
 using BillerJacket.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +8,14 @@ public class ArDbContext : DbContext
 {
     private readonly Guid? _tenantId;
 
+    // Used by EF Core migrations and design-time factory
     public ArDbContext(DbContextOptions<ArDbContext> options) : base(options) { }
 
-    public ArDbContext(DbContextOptions<ArDbContext> options, Guid tenantId)
+    // Used by DI with tenant provider
+    public ArDbContext(DbContextOptions<ArDbContext> options, ITenantProvider tenantProvider)
         : base(options)
     {
-        _tenantId = tenantId;
+        _tenantId = tenantProvider.TenantId;
     }
 
     public DbSet<Tenant> Tenants => Set<Tenant>();

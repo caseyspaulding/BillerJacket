@@ -1,0 +1,32 @@
+@page "/setup"
+@model BillerJacket.Web.Pages.SetupModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Set Up Your Organization";
+}
+
+<h1>Set up your organization</h1>
+<p class="subtitle">One more step before you get started</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-error">@Model.ErrorMessage</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.CompanyName">Company Name</label>
+        <input asp-for="Input.CompanyName" autofocus />
+        <span asp-validation-for="Input.CompanyName" class="validation-message"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.DefaultCurrency">Default Currency</label>
+        <select asp-for="Input.DefaultCurrency">
+            <option value="USD">USD - US Dollar</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="GBP">GBP - British Pound</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Complete setup</button>
+</form>

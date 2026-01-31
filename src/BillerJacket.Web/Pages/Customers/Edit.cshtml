@@ -1,0 +1,49 @@
+@page "/customers/edit/{id?}"
+@model BillerJacket.Web.Pages.Customers.EditModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Add Customer" : "Edit Customer";
+}
+
+<div style="max-width: 560px;">
+    <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">
+        @(Model.IsNew ? "Add Customer" : "Edit Customer")
+    </h1>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="Input.CustomerId" />
+
+        <div class="form-group">
+            <label asp-for="Input.DisplayName">Name</label>
+            <input asp-for="Input.DisplayName" autofocus />
+            <span asp-validation-for="Input.DisplayName" class="validation-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.Email">Email</label>
+            <input asp-for="Input.Email" type="email" />
+            <span asp-validation-for="Input.Email" class="validation-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.Phone">Phone</label>
+            <input asp-for="Input.Phone" type="tel" />
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+            <input asp-for="Input.IsActive" type="checkbox" style="width: auto;" />
+            <label asp-for="Input.IsActive" style="margin: 0;">Active</label>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn btn-primary">
+                @(Model.IsNew ? "Add Customer" : "Save Changes")
+            </button>
+            <a href="/customers" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

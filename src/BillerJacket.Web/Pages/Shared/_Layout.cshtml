@@ -1,0 +1,54 @@
+@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(ViewData["Title"] ?? "BillerJacket")</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<div class="layout">
+    <nav class="sidebar">
+        <div class="sidebar-brand">BillerJacket</div>
+        <div class="sidebar-nav">
+            <a href="/" class="@(ViewContext.RouteData.Values["page"]?.ToString() == "/Index" ? "active" : "")">Dashboard</a>
+            <a href="/customers">Customers</a>
+            <a href="/invoices">Invoices</a>
+            <a href="/payments">Payments</a>
+            <a href="/activity">Activity</a>
+
+            <div class="sidebar-section">Support</div>
+            <a href="/support/webhooks">Webhooks</a>
+            <a href="/support/dlq">Dead Letters</a>
+
+            @if (User.FindFirstValue("role") == "SuperAdmin")
+            {
+                <div class="sidebar-section">Admin</div>
+                <a href="/admin">Admin Dashboard</a>
+                <a href="/admin/tenants">Tenants</a>
+                <a href="/admin/blog">Blog</a>
+                <a href="/admin/pages">Pages</a>
+            }
+        </div>
+        <div class="sidebar-footer">
+            <span class="user-email">@User.FindFirstValue("email")</span>
+            <span class="tenant-name">@User.FindFirstValue("role")</span>
+            <form method="post" asp-page="/Logout" style="margin-top: 8px;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-logout">Sign out</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <header class="topbar">
+            <span style="font-size:13px; color: var(--text-muted);">@User.FindFirstValue("email")</span>
+        </header>
+        <main class="page-content">
+            @RenderBody()
+        </main>
+    </div>
+</div>
+</body>
+</html>

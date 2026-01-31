@@ -1,0 +1,37 @@
+@page "/register"
+@model BillerJacket.Web.Pages.RegisterModel
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Create Account";
+}
+
+<h1>Create account</h1>
+<p class="subtitle">Get started with BillerJacket</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-error">@Model.ErrorMessage</div>
+}
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Input.Email">Email</label>
+        <input asp-for="Input.Email" type="email" autocomplete="email" autofocus />
+        <span asp-validation-for="Input.Email" class="validation-message"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.Password">Password</label>
+        <input asp-for="Input.Password" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password" class="validation-message"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+        <input asp-for="Input.ConfirmPassword" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword" class="validation-message"></span>
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Create account</button>
+</form>
+
+<div class="auth-links">
+    Already have an account? <a href="/login">Sign in</a>
+</div>

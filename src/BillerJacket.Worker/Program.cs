@@ -1,19 +1,22 @@
+using BillerJacket.Application.Common;
 using BillerJacket.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 // Serilog
-builder.Services.AddSerilog((_, cfg) => cfg
-    .ReadFrom.Configuration(builder.Configuration)
+builder.Host.UseSerilog((ctx, cfg) => cfg
+    .ReadFrom.Configuration(ctx.Configuration)
     .WriteTo.Console());
 
 // EF Core
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DefaultConnection not configured.");
 
-builder.Services.AddDbContext<ArDbContext>(options =>
+builder.Services.AddScoped<ITenantProvider, CurrentTenantProvider>();
+
+builder.Services.AddDbContext<ArDbContext>((sp, options) =>
     options.UseSqlServer(connectionString));
 
 // Service Bus consumers (only if connection string is configured)
@@ -24,5 +27,8 @@ if (!string.IsNullOrWhiteSpace(sbConnectionString))
     // Register hosted services for each queue processor here
 }
 
-var host = builder.Build();
-host.Run();
+var app = builder.Build();
+
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "BillerJacket.Worker" }));
+
+app.Run();

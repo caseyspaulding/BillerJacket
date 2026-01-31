@@ -1,0 +1,59 @@
+@page "/customers"
+@model BillerJacket.Web.Pages.Customers.IndexModel
+@{
+    ViewData["Title"] = "Customers";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Customers</h1>
+    <a href="/customers/edit" class="btn btn-primary">Add Customer</a>
+</div>
+
+@if (!Model.Customers.Any())
+{
+    <div class="empty-state">
+        <p>No customers yet.</p>
+        <a href="/customers/edit">Add your first customer</a>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Active</th>
+                    <th>Invoices</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Customers)
+                {
+                    <tr>
+                        <td><strong>@c.DisplayName</strong></td>
+                        <td>@c.Email</td>
+                        <td>@(c.Phone ?? "---")</td>
+                        <td>
+                            @if (c.IsActive)
+                            {
+                                <span class="badge badge-active">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-inactive">Inactive</span>
+                            }
+                        </td>
+                        <td>@c.InvoiceCount</td>
+                        <td>@c.CreatedAt.ToString("MMM d, yyyy")</td>
+                        <td><a href="/customers/edit/@c.CustomerId">Edit</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
