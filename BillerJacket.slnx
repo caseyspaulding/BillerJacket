@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BillerJacket.Api/BillerJacket.Api.csproj" />
+    <Project Path="src/BillerJacket.Application/BillerJacket.Application.csproj" />
+    <Project Path="src/BillerJacket.Contracts/BillerJacket.Contracts.csproj" />
+    <Project Path="src/BillerJacket.Domain/BillerJacket.Domain.csproj" />
+    <Project Path="src/BillerJacket.Infrastructure/BillerJacket.Infrastructure.csproj" />
+    <Project Path="src/BillerJacket.Web/BillerJacket.Web.csproj" />
+    <Project Path="src/BillerJacket.Worker/BillerJacket.Worker.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "billerjacket-db": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/home/casey/projects/BillerJacket/src/BillerJacket.DbMCP/mcp-wrapper.js"]
+    }
+  }
+}

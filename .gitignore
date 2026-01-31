@@ -1,0 +1,37 @@
+## .NET
+bin/
+bin\
+obj/
+obj\
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+publish/
+
+## NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+## IDE
+.vs/
+.vscode/
+*.swp
+*~
+.idea/
+
+## User secrets
+secrets.json
+
+## Node
+node_modules/
+
+## OS
+.DS_Store
+Thumbs.db
