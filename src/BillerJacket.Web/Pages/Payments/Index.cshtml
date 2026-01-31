@@ -1,0 +1,48 @@
+@page "/payments"
+@model BillerJacket.Web.Pages.Payments.IndexModel
+@{
+    ViewData["Title"] = "Payments";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Payments</h1>
+</div>
+
+@if (!Model.Payments.Any())
+{
+    <div class="empty-state">
+        <p>No payments recorded.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Customer</th>
+                    <th style="text-align:right">Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Applied At</th>
+                    <th>Correlation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pmt in Model.Payments)
+                {
+                    <tr>
+                        <td><a href="/invoices/@pmt.InvoiceId">@pmt.InvoiceNumber</a></td>
+                        <td>@pmt.CustomerName</td>
+                        <td style="text-align:right">@pmt.Amount.ToString("C")</td>
+                        <td><span class="badge badge-@pmt.Method.ToString().ToLower()">@pmt.Method</span></td>
+                        <td><span class="badge badge-@pmt.Status.ToString().ToLower()">@pmt.Status</span></td>
+                        <td>@pmt.AppliedAt.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td class="mono">@(pmt.CorrelationId ?? "---")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

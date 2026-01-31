@@ -1,5 +1,5 @@
 using System.Text.Json;
-using BillerJacket.Api.Infrastructure.Messaging;
+using BillerJacket.Infrastructure.Messaging;
 using BillerJacket.Api.Models;
 using BillerJacket.Application.Common;
 using BillerJacket.Contracts.Messaging;

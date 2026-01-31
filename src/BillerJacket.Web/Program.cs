@@ -1,6 +1,7 @@
 using BillerJacket.Application.Common;
 using BillerJacket.Infrastructure.Data;
 using BillerJacket.Infrastructure.Identity;
+using BillerJacket.Infrastructure.Reporting;
 using BillerJacket.Web.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,10 @@ builder.Services.AddDbContext<ArDbContext>((sp, options) =>
 
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+// Dapper reporting queries
+builder.Services.AddScoped(_ => new InvoiceDashboardQueries(connectionString));
+builder.Services.AddScoped(_ => new CustomerAgingQueries(connectionString));
 
 // Identity
 builder.Services.AddDefaultIdentity<AppUser>(options =>

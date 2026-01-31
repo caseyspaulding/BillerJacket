@@ -1,0 +1,31 @@
+@page "/admin"
+@model BillerJacket.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Admin Dashboard</h1>
+
+<div class="dashboard-cards" style="grid-template-columns: repeat(3, 1fr);">
+    <a href="/admin/tenants" style="text-decoration: none; color: inherit;">
+        <div class="dashboard-card">
+            <span class="card-label">Tenants</span>
+            <span class="card-value">@Model.ActiveTenants</span>
+            <span style="font-size: 13px; color: var(--text-muted);">@Model.TotalTenants total &middot; @Model.ActiveTenants active</span>
+        </div>
+    </a>
+    <a href="/admin/blog" style="text-decoration: none; color: inherit;">
+        <div class="dashboard-card">
+            <span class="card-label">Blog Posts</span>
+            <span class="card-value">@Model.TotalBlogPosts</span>
+            <span style="font-size: 13px; color: var(--text-muted);">@Model.PublishedBlogPosts published &middot; @(Model.TotalBlogPosts - Model.PublishedBlogPosts) draft</span>
+        </div>
+    </a>
+    <a href="/admin/pages" style="text-decoration: none; color: inherit;">
+        <div class="dashboard-card">
+            <span class="card-label">Landing Pages</span>
+            <span class="card-value">@Model.TotalLandingPages</span>
+            <span style="font-size: 13px; color: var(--text-muted);">@Model.PublishedLandingPages published &middot; @(Model.TotalLandingPages - Model.PublishedLandingPages) draft</span>
+        </div>
+    </a>
+</div>

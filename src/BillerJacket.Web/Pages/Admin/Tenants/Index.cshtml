@@ -1,0 +1,55 @@
+@page "/admin/tenants"
+@model BillerJacket.Web.Pages.Admin.Tenants.IndexModel
+@{
+    ViewData["Title"] = "Tenants";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Tenants</h1>
+</div>
+
+@if (!Model.Tenants.Any())
+{
+    <div class="empty-state">
+        <p>No tenants found.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Currency</th>
+                    <th>Active</th>
+                    <th>Users</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.Tenants)
+                {
+                    <tr>
+                        <td><strong>@t.Name</strong></td>
+                        <td>@t.DefaultCurrency</td>
+                        <td>
+                            @if (t.IsActive)
+                            {
+                                <span class="badge badge-active">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-inactive">Inactive</span>
+                            }
+                        </td>
+                        <td>@t.UserCount</td>
+                        <td>@t.CreatedAt.ToString("MMM d, yyyy")</td>
+                        <td><a href="/admin/tenants/edit/@t.TenantId">Edit</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

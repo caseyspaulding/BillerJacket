@@ -1,0 +1,68 @@
+@page "/admin/pages"
+@model BillerJacket.Web.Pages.Admin.Pages.IndexModel
+@using BillerJacket.Domain.Enums
+@{
+    ViewData["Title"] = "Landing Pages";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Landing Pages</h1>
+    <a href="/admin/pages/edit" class="btn btn-primary">New Page</a>
+</div>
+
+<div class="filter-bar">
+    <form method="get">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>())
+            {
+                <option value="@s" selected="@(Model.Status == s.ToString())">@s</option>
+            }
+        </select>
+        <select name="type" onchange="this.form.submit()">
+            <option value="">All Types</option>
+            @foreach (var t in Enum.GetValues<PageType>())
+            {
+                <option value="@t" selected="@(Model.Type == t.ToString())">@t</option>
+            }
+        </select>
+    </form>
+</div>
+
+@if (!Model.LandingPages.Any())
+{
+    <div class="empty-state">
+        <p>No landing pages yet.</p>
+        <a href="/admin/pages/edit">Create your first page</a>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Slug</th>
+                    <th>Page Type</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.LandingPages)
+                {
+                    <tr>
+                        <td><strong>@p.Title</strong></td>
+                        <td class="mono">@p.Slug</td>
+                        <td><span class="badge badge-@p.PageType.ToString().ToLower()">@p.PageType</span></td>
+                        <td><span class="badge badge-@p.Status.ToString().ToLower()">@p.Status</span></td>
+                        <td>@p.CreatedAt.ToString("MMM d, yyyy")</td>
+                        <td><a href="/admin/pages/edit/@p.LandingPageId">Edit</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

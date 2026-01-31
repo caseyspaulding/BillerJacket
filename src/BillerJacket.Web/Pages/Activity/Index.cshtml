@@ -1,0 +1,67 @@
+@page "/activity"
+@model BillerJacket.Web.Pages.Activity.IndexModel
+@{
+    ViewData["Title"] = "Activity";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Activity Log</h1>
+</div>
+
+<div class="filter-bar">
+    <form method="get">
+        <select name="entityType" onchange="this.form.submit()">
+            <option value="">All Entity Types</option>
+            <option value="Invoice" selected="@(Model.EntityType == "Invoice")">Invoice</option>
+            <option value="Payment" selected="@(Model.EntityType == "Payment")">Payment</option>
+            <option value="Webhook" selected="@(Model.EntityType == "Webhook")">Webhook</option>
+            <option value="Customer" selected="@(Model.EntityType == "Customer")">Customer</option>
+        </select>
+    </form>
+</div>
+
+@if (!Model.Activities.Any())
+{
+    <div class="empty-state">
+        <p>No activity recorded.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Action</th>
+                    <th>Entity Type</th>
+                    <th>Entity ID</th>
+                    <th>Performed By</th>
+                    <th>Correlation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.Activities)
+                {
+                    <tr>
+                        <td>@a.OccurredAt.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td>@a.Action</td>
+                        <td>@a.EntityType</td>
+                        <td>
+                            @if (a.EntityType == "Invoice" && Guid.TryParse(a.EntityId, out _))
+                            {
+                                <a href="/invoices/@a.EntityId">@a.EntityId[..8]...</a>
+                            }
+                            else
+                            {
+                                <span class="mono">@(a.EntityId.Length > 8 ? $"{a.EntityId[..8]}..." : a.EntityId)</span>
+                            }
+                        </td>
+                        <td>@a.PerformedBy</td>
+                        <td class="mono">@(a.CorrelationId ?? "---")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

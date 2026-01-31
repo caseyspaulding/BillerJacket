@@ -1,5 +1,8 @@
 using BillerJacket.Application.Common;
 using BillerJacket.Infrastructure.Data;
+using BillerJacket.Infrastructure.Messaging;
+using BillerJacket.Worker.Infrastructure;
+using BillerJacket.Worker.Processors;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -14,7 +17,8 @@ builder.Host.UseSerilog((ctx, cfg) => cfg
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DefaultConnection not configured.");
 
-builder.Services.AddScoped<ITenantProvider, CurrentTenantProvider>();
+builder.Services.AddScoped<MessageScopeTenantProvider>();
+builder.Services.AddScoped<ITenantProvider>(sp => sp.GetRequiredService<MessageScopeTenantProvider>());
 
 builder.Services.AddDbContext<ArDbContext>((sp, options) =>
     options.UseSqlServer(connectionString));
@@ -24,7 +28,16 @@ var sbConnectionString = builder.Configuration.GetConnectionString("ServiceBus")
 if (!string.IsNullOrWhiteSpace(sbConnectionString))
 {
     builder.Services.AddSingleton(_ => new Azure.Messaging.ServiceBus.ServiceBusClient(sbConnectionString));
-    // Register hosted services for each queue processor here
+    builder.Services.AddScoped<IBusPublisher, BusPublisher>();
+
+    builder.Services.AddHostedService<EmailProcessorHostedService>();
+    builder.Services.AddHostedService<DunningProcessorHostedService>();
+    builder.Services.AddHostedService<PaymentProcessorHostedService>();
+    builder.Services.AddHostedService<WebhookProcessorHostedService>();
+}
+else
+{
+    builder.Services.AddScoped<IBusPublisher, NullBusPublisher>();
 }
 
 var app = builder.Build();

@@ -1,0 +1,142 @@
+@page "/invoices/{id:guid}"
+@model BillerJacket.Web.Pages.Invoices.DetailModel
+@{
+    ViewData["Title"] = $"Invoice {Model.Invoice.InvoiceNumber}";
+}
+
+<div class="detail-header">
+    <div>
+        <h1 style="font-size: 22px; font-weight: 700;">
+            Invoice @Model.Invoice.InvoiceNumber
+            <span class="badge badge-@Model.Invoice.Status.ToString().ToLower()">@Model.Invoice.Status</span>
+        </h1>
+        <dl class="detail-meta">
+            <div><dt>Customer</dt><dd>@Model.Invoice.Customer.DisplayName</dd></div>
+            <div><dt>Issued</dt><dd>@Model.Invoice.IssueDate.ToString("MMM d, yyyy")</dd></div>
+            <div><dt>Due</dt><dd>@Model.Invoice.DueDate.ToString("MMM d, yyyy")</dd></div>
+            <div><dt>Currency</dt><dd>@Model.Invoice.CurrencyCode</dd></div>
+        </dl>
+    </div>
+    <a href="/invoices" class="btn btn-secondary">Back to Invoices</a>
+</div>
+
+<div class="money-cards">
+    <div class="money-card">
+        <div class="money-label">Subtotal</div>
+        <div class="money-value">@Model.Invoice.SubtotalAmount.ToString("C")</div>
+    </div>
+    <div class="money-card">
+        <div class="money-label">Tax</div>
+        <div class="money-value">@Model.Invoice.TaxAmount.ToString("C")</div>
+    </div>
+    <div class="money-card">
+        <div class="money-label">Total</div>
+        <div class="money-value">@Model.Invoice.TotalAmount.ToString("C")</div>
+    </div>
+    <div class="money-card">
+        <div class="money-label">Paid</div>
+        <div class="money-value" style="color: #16a34a;">@Model.Invoice.PaidAmount.ToString("C")</div>
+    </div>
+    <div class="money-card">
+        <div class="money-label">Balance Due</div>
+        <div class="money-value" style="color: var(--danger);">@Model.Invoice.BalanceDue.ToString("C")</div>
+    </div>
+</div>
+
+@if (Model.Invoice.DunningState is not null)
+{
+    <div style="background: #fef9c3; border: 1px solid #fde68a; border-radius: var(--radius); padding: 12px 16px; margin-bottom: 24px; font-size: 13px;">
+        <strong>Dunning Active</strong> — Step @Model.Invoice.DunningState.CurrentStepNumber
+        @if (Model.Invoice.DunningState.NextActionAt.HasValue)
+        {
+            <span> | Next action: @Model.Invoice.DunningState.NextActionAt.Value.ToString("MMM d, yyyy h:mm tt")</span>
+        }
+    </div>
+}
+
+<h2 class="section-title">Line Items</h2>
+@if (!Model.Invoice.LineItems.Any())
+{
+    <div class="empty-state"><p>No line items.</p></div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Description</th>
+                    <th style="text-align:right">Qty</th>
+                    <th style="text-align:right">Unit Price</th>
+                    <th style="text-align:right">Line Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var li in Model.Invoice.LineItems)
+                {
+                    <tr>
+                        <td>@li.LineNumber</td>
+                        <td>@li.Description</td>
+                        <td style="text-align:right">@li.Quantity.ToString("N2")</td>
+                        <td style="text-align:right">@li.UnitPrice.ToString("C")</td>
+                        <td style="text-align:right">@li.LineTotal.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<h2 class="section-title">Payments</h2>
+@if (!Model.Payments.Any())
+{
+    <div class="empty-state"><p>No payments recorded.</p></div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th style="text-align:right">Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Correlation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pmt in Model.Payments)
+                {
+                    <tr>
+                        <td>@pmt.AppliedAt.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td style="text-align:right">@pmt.Amount.ToString("C")</td>
+                        <td><span class="badge badge-@pmt.Method.ToString().ToLower()">@pmt.Method</span></td>
+                        <td><span class="badge badge-@pmt.Status.ToString().ToLower()">@pmt.Status</span></td>
+                        <td class="mono">@(pmt.CorrelationId ?? "---")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<h2 class="section-title">Timeline</h2>
+@if (!Model.Timeline.Any())
+{
+    <div class="empty-state"><p>No activity recorded.</p></div>
+}
+else
+{
+    <div class="timeline">
+        @foreach (var entry in Model.Timeline)
+        {
+            <div class="timeline-entry">
+                <div class="timeline-date">@entry.OccurredAt.ToString("MMM d, yyyy h:mm tt") — @entry.Source</div>
+                <div class="timeline-action">@entry.Action</div>
+                <div class="timeline-correlation">@entry.Detail @(entry.CorrelationId is not null ? $" | {entry.CorrelationId}" : "")</div>
+            </div>
+        }
+    </div>
+}

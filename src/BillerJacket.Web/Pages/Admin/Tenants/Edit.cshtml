@@ -1,0 +1,40 @@
+@page "/admin/tenants/edit/{id:guid}"
+@model BillerJacket.Web.Pages.Admin.Tenants.EditModel
+@{
+    ViewData["Title"] = "Edit Tenant";
+}
+
+<div style="max-width: 560px;">
+    <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Edit Tenant</h1>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <input type="hidden" asp-for="Input.TenantId" />
+
+        <div class="form-group">
+            <label asp-for="Input.Name">Name</label>
+            <input asp-for="Input.Name" autofocus />
+            <span asp-validation-for="Input.Name" class="validation-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Input.DefaultCurrency">Default Currency</label>
+            <input asp-for="Input.DefaultCurrency" maxlength="3" style="max-width: 100px;" />
+            <span asp-validation-for="Input.DefaultCurrency" class="validation-message"></span>
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+            <input asp-for="Input.IsActive" type="checkbox" style="width: auto;" />
+            <label asp-for="Input.IsActive" style="margin: 0;">Active</label>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/admin/tenants" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

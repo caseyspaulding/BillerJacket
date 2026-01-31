@@ -2,13 +2,9 @@ using System.Text;
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using BillerJacket.Contracts.Messaging;
+using Microsoft.Extensions.Logging;
 
-namespace BillerJacket.Api.Infrastructure.Messaging;
-
-public interface IBusPublisher
-{
-    Task PublishAsync(string queueName, IMessage message, CancellationToken ct = default);
-}
+namespace BillerJacket.Infrastructure.Messaging;
 
 public sealed class BusPublisher : IBusPublisher
 {

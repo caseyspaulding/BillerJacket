@@ -1,6 +1,7 @@
 using BillerJacket.Contracts.Messaging;
+using Microsoft.Extensions.Logging;
 
-namespace BillerJacket.Api.Infrastructure.Messaging;
+namespace BillerJacket.Infrastructure.Messaging;
 
 public sealed class NullBusPublisher : IBusPublisher
 {

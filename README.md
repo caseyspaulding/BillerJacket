@@ -1,4 +1,5 @@
 # BillerJacket
+**By Casey Spaulding**
 
 **Billing & Accounts Receivable service built with .NET 10, Azure Service Bus, and SQL Server.**
 

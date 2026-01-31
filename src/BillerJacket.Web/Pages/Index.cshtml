@@ -1,7 +1,100 @@
 @page
+@model BillerJacket.Web.Pages.IndexModel
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>BillerJacket</h1>
-<p>Billing &amp; AR Dashboard</p>
+<h1 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Dashboard</h1>
+
+<div class="dashboard-cards">
+    <div class="dashboard-card">
+        <span class="card-label">Total Outstanding</span>
+        <span class="card-value">@Model.Summary.TotalOutstanding.ToString("C")</span>
+    </div>
+    <div class="dashboard-card card-danger">
+        <span class="card-label">Overdue</span>
+        <span class="card-value">@Model.Summary.TotalOverdue.ToString("C")</span>
+    </div>
+    <div class="dashboard-card card-success">
+        <span class="card-label">Paid Last 30 Days</span>
+        <span class="card-value">@Model.Summary.PaidLast30Days.ToString("C")</span>
+    </div>
+    <div class="dashboard-card">
+        <span class="card-label">Open Invoices</span>
+        <span class="card-value">@Model.Summary.OpenInvoiceCount</span>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+    <div>
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Recent Invoices</h2>
+        @if (!Model.RecentInvoices.Any())
+        {
+            <div class="empty-state"><p>No invoices yet.</p></div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th style="text-align:right">Balance</th>
+                            <th>Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var inv in Model.RecentInvoices)
+                        {
+                            <tr>
+                                <td><a href="/invoices/@inv.InvoiceId">@inv.InvoiceNumber</a></td>
+                                <td>@inv.CustomerName</td>
+                                <td><span class="badge badge-@inv.Status.ToString().ToLower()">@inv.Status</span></td>
+                                <td style="text-align:right">@inv.BalanceDue.ToString("C")</td>
+                                <td>@inv.DueDate.ToString("MMM d, yyyy")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div>
+        <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 12px;">Recent Payments</h2>
+        @if (!Model.RecentPayments.Any())
+        {
+            <div class="empty-state"><p>No payments yet.</p></div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice</th>
+                            <th>Customer</th>
+                            <th style="text-align:right">Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pmt in Model.RecentPayments)
+                        {
+                            <tr>
+                                <td><a href="/invoices/@pmt.InvoiceId">@pmt.InvoiceNumber</a></td>
+                                <td>@pmt.CustomerName</td>
+                                <td style="text-align:right">@pmt.Amount.ToString("C")</td>
+                                <td><span class="badge badge-@pmt.Method.ToString().ToLower()">@pmt.Method</span></td>
+                                <td><span class="badge badge-@pmt.Status.ToString().ToLower()">@pmt.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

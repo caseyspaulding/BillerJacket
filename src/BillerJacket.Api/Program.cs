@@ -53,13 +53,13 @@ var sbConnectionString = builder.Configuration.GetConnectionString("ServiceBus")
 if (!string.IsNullOrWhiteSpace(sbConnectionString))
 {
     builder.Services.AddSingleton(_ => new Azure.Messaging.ServiceBus.ServiceBusClient(sbConnectionString));
-    builder.Services.AddScoped<BillerJacket.Api.Infrastructure.Messaging.IBusPublisher,
-        BillerJacket.Api.Infrastructure.Messaging.BusPublisher>();
+    builder.Services.AddScoped<BillerJacket.Infrastructure.Messaging.IBusPublisher,
+        BillerJacket.Infrastructure.Messaging.BusPublisher>();
 }
 else
 {
-    builder.Services.AddScoped<BillerJacket.Api.Infrastructure.Messaging.IBusPublisher,
-        BillerJacket.Api.Infrastructure.Messaging.NullBusPublisher>();
+    builder.Services.AddScoped<BillerJacket.Infrastructure.Messaging.IBusPublisher,
+        BillerJacket.Infrastructure.Messaging.NullBusPublisher>();
 }
 
 builder.Services.AddHttpContextAccessor();

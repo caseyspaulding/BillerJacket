@@ -1,0 +1,48 @@
+@page "/support/dlq"
+@model BillerJacket.Web.Pages.Support.Dlq.IndexModel
+@{
+    ViewData["Title"] = "Dead Letters";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Dead Letters</h1>
+</div>
+
+<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+    Failed webhook events and communication logs tracked in the database.
+</p>
+
+@if (!Model.FailedItems.Any())
+{
+    <div class="empty-state">
+        <p>No failed items found.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>Entity ID</th>
+                    <th>Error</th>
+                    <th>Time</th>
+                    <th>Correlation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FailedItems)
+                {
+                    <tr>
+                        <td><span class="badge badge-failed">@item.Source</span></td>
+                        <td class="mono">@(item.EntityId.Length > 8 ? $"{item.EntityId[..8]}..." : item.EntityId)</td>
+                        <td>@(item.ErrorMessage ?? "---")</td>
+                        <td>@item.OccurredAt.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td class="mono">@(item.CorrelationId ?? "---")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

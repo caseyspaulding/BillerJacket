@@ -1,0 +1,68 @@
+@page "/support/webhooks"
+@model BillerJacket.Web.Pages.Support.Webhooks.IndexModel
+@{
+    ViewData["Title"] = "Webhooks";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Webhook Events</h1>
+</div>
+
+<div class="filter-bar">
+    <form method="get">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            <option value="Received" selected="@(Model.Status == "Received")">Received</option>
+            <option value="Processing" selected="@(Model.Status == "Processing")">Processing</option>
+            <option value="Processed" selected="@(Model.Status == "Processed")">Processed</option>
+            <option value="Failed" selected="@(Model.Status == "Failed")">Failed</option>
+        </select>
+    </form>
+</div>
+
+@if (!Model.Webhooks.Any())
+{
+    <div class="empty-state">
+        <p>No webhook events recorded.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Provider</th>
+                    <th>Event Type</th>
+                    <th>Status</th>
+                    <th>Received At</th>
+                    <th>Processed At</th>
+                    <th>Error</th>
+                    <th>Correlation ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var w in Model.Webhooks)
+                {
+                    var badgeClass = w.ProcessingStatus switch
+                    {
+                        "Received" => "badge-received",
+                        "Processing" => "badge-processing",
+                        "Processed" => "badge-processed",
+                        "Failed" => "badge-failed",
+                        _ => "badge"
+                    };
+                    <tr>
+                        <td>@w.Provider</td>
+                        <td>@w.EventType</td>
+                        <td><span class="badge @badgeClass">@w.ProcessingStatus</span></td>
+                        <td>@w.ReceivedAt.ToString("MMM d, yyyy h:mm tt")</td>
+                        <td>@(w.ProcessedAt?.ToString("MMM d, yyyy h:mm tt") ?? "---")</td>
+                        <td>@(w.ErrorMessage ?? "---")</td>
+                        <td class="mono">@(w.CorrelationId ?? "---")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,63 @@
+@page "/admin/blog"
+@model BillerJacket.Web.Pages.Admin.Blog.IndexModel
+@using BillerJacket.Domain.Enums
+@{
+    ViewData["Title"] = "Blog Posts";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 22px; font-weight: 700;">Blog Posts</h1>
+    <a href="/admin/blog/edit" class="btn btn-primary">New Post</a>
+</div>
+
+<div class="filter-bar">
+    <form method="get">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>())
+            {
+                <option value="@s" selected="@(Model.Status == s.ToString())">@s</option>
+            }
+        </select>
+    </form>
+</div>
+
+@if (!Model.Posts.Any())
+{
+    <div class="empty-state">
+        <p>No blog posts yet.</p>
+        <a href="/admin/blog/edit">Create your first post</a>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Slug</th>
+                    <th>Status</th>
+                    <th>Author</th>
+                    <th>Published</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Posts)
+                {
+                    <tr>
+                        <td><strong>@p.Title</strong></td>
+                        <td class="mono">@p.Slug</td>
+                        <td><span class="badge badge-@p.Status.ToString().ToLower()">@p.Status</span></td>
+                        <td>@(p.AuthorEmail ?? "---")</td>
+                        <td>@(p.PublishedAt?.ToString("MMM d, yyyy") ?? "---")</td>
+                        <td>@p.CreatedAt.ToString("MMM d, yyyy")</td>
+                        <td><a href="/admin/blog/edit/@p.BlogPostId">Edit</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
