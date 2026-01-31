@@ -1,0 +1,55 @@
+@page "/reports/aging"
+@model BillerJacket.Web.Pages.Reports.IndexModel
+@{
+    ViewData["Title"] = "Aging Report";
+}
+
+<h1 style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">Aging Report</h1>
+
+@if (!Model.Rows.Any())
+{
+    <div class="empty-state"><p>No outstanding balances.</p></div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th style="text-align:right">Current</th>
+                    <th style="text-align:right">1-30 Days</th>
+                    <th style="text-align:right">31-60 Days</th>
+                    <th style="text-align:right">61-90 Days</th>
+                    <th style="text-align:right">90+ Days</th>
+                    <th style="text-align:right">Total Outstanding</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    <tr>
+                        <td>@row.CustomerName</td>
+                        <td style="text-align:right">@row.CurrentAmount.ToString("C")</td>
+                        <td style="text-align:right">@row.Days1To30.ToString("C")</td>
+                        <td style="text-align:right">@row.Days31To60.ToString("C")</td>
+                        <td style="text-align:right">@row.Days61To90.ToString("C")</td>
+                        <td style="text-align:right">@row.Days90Plus.ToString("C")</td>
+                        <td style="text-align:right; font-weight:600">@row.TotalOutstanding.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr style="font-weight: 700; border-top: 2px solid var(--border);">
+                    <td>Totals</td>
+                    <td style="text-align:right">@Model.TotalCurrent.ToString("C")</td>
+                    <td style="text-align:right">@Model.Total1To30.ToString("C")</td>
+                    <td style="text-align:right">@Model.Total31To60.ToString("C")</td>
+                    <td style="text-align:right">@Model.Total61To90.ToString("C")</td>
+                    <td style="text-align:right">@Model.Total90Plus.ToString("C")</td>
+                    <td style="text-align:right">@Model.GrandTotal.ToString("C")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
